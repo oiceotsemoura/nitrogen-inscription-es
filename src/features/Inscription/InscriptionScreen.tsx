@@ -40,7 +40,10 @@ export const InscriptionScreen = () => {
   useEffect(() => {
     (async () => {
       try {
-        const res = await login({ email: userData.email });
+        const res = await login({
+          email: userData.email,
+          growing_season: userData.growing_season,
+        });
         const values = JSON.stringify({ ...res.data });
 
         localStorage.setItem("userData", values);
@@ -128,7 +131,10 @@ export const InscriptionScreen = () => {
                     changeStateOfField(state, index)
                   }
                   fields={field.input}
-                  userData={{ email: userData.email }}
+                  userData={{
+                    email: userData.email,
+                    growing_season: userData.growing_season,
+                  }}
                 />
               </AccordionDetails>
             </Accordion>

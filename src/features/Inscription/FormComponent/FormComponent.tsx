@@ -46,7 +46,7 @@ interface FormData {
 
 interface Props {
   fields: Input;
-  userData: { email: string };
+  userData: { email: string; growing_season: string };
   changeState: (state: string, index: number) => void;
   index: number;
 }
@@ -103,8 +103,9 @@ export const FormComponent = ({
           nitrogen_source: values.nitrogen_source as string,
           nitrogen_date: values.nitrogen_date as string,
           planting_type: values.planting_type as string,
-          choosen_dose_type: values.planting_type as string,
+          choosen_dose_type: values.choosen_dose_type as string,
         },
+        growing_season: userData.growing_season as string,
       });
       changeState("completed", index);
       setIsLoading(false);
@@ -136,6 +137,7 @@ export const FormComponent = ({
         planting_type: values.planting_type as string,
         choosen_dose_type: values.choosen_dose_type as string,
       },
+      growing_season: userData.growing_season as string,
     }).catch((err) => {
       console.log(err);
     });
@@ -358,7 +360,7 @@ export const FormComponent = ({
             color: "#5C5C5C",
           }}
         >
-          Indica si realizarás fertilización/refertilización fija o variable:
+          Indica si realizarás fertilización/refertilización fija o variable *
         </Typography>
 
         <Controller

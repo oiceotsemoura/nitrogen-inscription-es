@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Typography, Button, CircularProgress, TextField } from "@mui/material";
 import { Container, Input, Label, FormContainer, CardWrapper } from "./styles";
 import { login } from "../../api/Auth";
@@ -11,6 +11,15 @@ import { Colors } from "../../config/Colors";
 
 export const AuthScreen = () => {
   const navigate = useNavigate();
+
+  const [queryParameters] = useSearchParams();
+
+  const defaultGrowingSeason = `${new Date().getFullYear()}:corn:AR:1:SUM`;
+
+  const growing_season = queryParameters.get("growing_season")
+    ? queryParameters.get("growing_season")
+    : defaultGrowingSeason;
+
   const {
     register,
     handleSubmit,
@@ -23,8 +32,7 @@ export const AuthScreen = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onSubmit = async (data: any) => {
-    const url = `${window.location.href}`;
-    const season = url.split("growing_season=")[1];
+    data["growing_season"] = growing_season;
     try {
       setIsLoading(true);
       const res = await login(data);
@@ -34,7 +42,7 @@ export const AuthScreen = () => {
 
       localStorage.setItem("userData", values);
       setIsLoading(false);
-      navigate(`/inscription/growing_season=${season}`);
+      navigate(`/inscription`);
     } catch (err) {
       setModalErrorIsVisible(true);
       setIsLoading(false);
