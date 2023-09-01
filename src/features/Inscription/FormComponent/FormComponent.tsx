@@ -407,7 +407,7 @@ export const FormComponent = ({
         </Typography>
         <InputField
           disabled={fields.completed}
-          color="#5C5C5C"
+          style={{ color: "#5C5C5C" }}
           type="date"
           id="date"
           {...register("nitrogen_date", {
