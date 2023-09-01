@@ -2,7 +2,6 @@ import axios, { AxiosResponse } from "axios";
 
 interface InscriptionReq {
   email: string;
-  cpf: string;
   values: Input;
 }
 
@@ -15,10 +14,12 @@ interface Input {
   nitrogen_dose: number;
   nitrogen_source: string;
   nitrogen_date: string;
+  planting_type: string;
+  choosen_dose_type: string;
 }
 
 export const saveValue = async (req: InscriptionReq) => {
-  const { cpf, email, values } = req;
+  const { email, values } = req;
 
   const valuesParsed = {
     ...values,
@@ -30,7 +31,7 @@ export const saveValue = async (req: InscriptionReq) => {
     completed: values.completed as boolean,
   };
   const response: AxiosResponse<any> = await axios.put(
-    `https://oox9hmqkb5.execute-api.us-east-1.amazonaws.com/dev/valNitrogenForm?email=${email}&cpf=${cpf}`,
+    `https://oox9hmqkb5.execute-api.us-east-1.amazonaws.com/dev/valNitrogenForm?email=${email}`,
     valuesParsed
   );
   return response;

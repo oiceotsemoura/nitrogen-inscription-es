@@ -23,6 +23,8 @@ export const AuthScreen = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onSubmit = async (data: any) => {
+    const url = `${window.location.href}`;
+    const season = url.split("growing_season=")[1];
     try {
       setIsLoading(true);
       const res = await login(data);
@@ -32,7 +34,7 @@ export const AuthScreen = () => {
 
       localStorage.setItem("userData", values);
       setIsLoading(false);
-      navigate("/inscription");
+      navigate(`/inscription/growing_season=${season}`);
     } catch (err) {
       setModalErrorIsVisible(true);
       setIsLoading(false);
@@ -49,9 +51,9 @@ export const AuthScreen = () => {
           Cuenta no encontrada
         </Typography>
         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          El correo electrónico o CUIT ingresado no se encontró en nuestra base
-          de datos. clientes suscritos a VAlora 2023. Asegúrate de estar usando
-          el mismo datos registrados o si el registro se realizó correctamente.
+          Cuenta no registrada o no se han encontrado lotes VAlora para esta
+          cuenta. Asegura colocar el mismo email utilizado para registrarte en
+          VAlora Maíz 2023
         </Typography>
         <div
           style={{
@@ -87,13 +89,11 @@ export const AuthScreen = () => {
             <Typography
               style={{ fontSize: 18, fontFamily: "Roboto", color: "#5C5C5C" }}
             >
-              Bayer VAlora corn le ayuda a explorar la rentabilidad con su
-              inversión adicional protegida! Enciende tus campos Maíz Bayer con
-              prescripciones de densidad de siembra y recomendaciones
-              personalizadas de aplicación de nitrógeno. Asegúrese de haber
-              introducido y plantado correctamente el campos que desea
-              solicitar. Esta recomendación es una cortesía Bayer para clientes
-              de Cosecha Verano 2023.
+              Bayer VALora te apoya para maximizar la productividad y
+              rentabilidad de cada uno de tus lotes, ¡con tu inversión adicional
+              protegida! Además de proporcionar prescripciones de densidad de
+              siembra de semillas que mejoran tus lotes de maíz Dekalb, podemos
+              ofrecer recomendaciones personalizadas de aplicación de nitrógeno.
             </Typography>
           </FormContainer>
         </div>
@@ -128,8 +128,8 @@ export const AuthScreen = () => {
                   color: "#5C5C5C",
                 }}
               >
-                Recuerda utilizar los mismos datos ingresados ​​en el programa
-                VALora Maíz 2023
+                Recorda colocar el mismo email utilizado para registrarte en
+                VAlora Maíz 2023
               </Typography>
             </div>
             <div
@@ -139,7 +139,7 @@ export const AuthScreen = () => {
                 paddingTop: "10px",
               }}
             >
-              <TextField
+              {/* <TextField
                 variant="filled"
                 style={{
                   width: "100%",
@@ -151,7 +151,7 @@ export const AuthScreen = () => {
                 id="cpf"
                 label="CUIT"
                 {...register("cpf", { required: true })}
-              />
+              /> */}
 
               <TextField
                 variant="filled"

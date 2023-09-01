@@ -30,9 +30,7 @@ const statusObject = {
   empty: "No llenado",
 };
 
-interface userData extends LoginRes {
-  cpf: string;
-}
+interface userData extends LoginRes {}
 
 export const InscriptionScreen = () => {
   const userData: userData = JSON.parse(
@@ -42,8 +40,8 @@ export const InscriptionScreen = () => {
   useEffect(() => {
     (async () => {
       try {
-        const res = await login({ cpf: userData.cpf, email: userData.email });
-        const values = JSON.stringify({ cpf: userData.cpf, ...res.data });
+        const res = await login({ email: userData.email });
+        const values = JSON.stringify({ ...res.data });
 
         localStorage.setItem("userData", values);
       } catch (err) {
@@ -63,6 +61,7 @@ export const InscriptionScreen = () => {
       newFields.fields[index].input.field_status !== "started"
     ) {
       newFields.fields[index].input.field_status = "started";
+      setUserDataState({ ...newFields });
     }
     if (
       state === "completed" &&
@@ -70,8 +69,9 @@ export const InscriptionScreen = () => {
     ) {
       newFields.fields[index].input.field_status = "completed";
       newFields.fields[index].input.completed = true;
+      setUserDataState({ ...newFields });
     }
-    setUserDataState({ ...newFields });
+
     // if (userDataState.fields[index].input.field_status === "empty") {
     //   const newFields = userDataState;
     //   console.log("starts", index);
@@ -100,7 +100,17 @@ export const InscriptionScreen = () => {
                     marginRight: 10,
                   }}
                 >
-                  <Typography>{field.field_name}</Typography>
+                  <Typography
+                    style={{
+                      fontWeight: 400,
+                      fontSize: 24,
+                      fontFamily: "Roboto",
+                      color: "#000",
+                      marginBottom: 10,
+                    }}
+                  >
+                    {field.field_name}
+                  </Typography>
                   <Chip
                     color={chipColor(field.input.field_status as string)}
                     label={
@@ -118,7 +128,7 @@ export const InscriptionScreen = () => {
                     changeStateOfField(state, index)
                   }
                   fields={field.input}
-                  userData={{ cpf: userData.cpf, email: userData.email }}
+                  userData={{ email: userData.email }}
                 />
               </AccordionDetails>
             </Accordion>

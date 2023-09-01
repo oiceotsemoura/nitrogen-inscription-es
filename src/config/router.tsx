@@ -7,8 +7,11 @@ const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<AuthScreen />} path="/" />
-        <Route element={<InscriptionScreen />} path="/inscription" />
+        <Route element={<AuthScreen />} path="/:growing_season" />
+        <Route
+          element={<InscriptionScreen />}
+          path="/inscription/:growing_season"
+        />
       </Routes>
     </BrowserRouter>
   );

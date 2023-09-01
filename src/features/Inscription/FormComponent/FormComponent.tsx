@@ -13,6 +13,7 @@ import {
   Autocomplete,
   TextField,
   CircularProgress,
+  Alert,
 } from "@mui/material";
 import { Input } from "../../../api/Auth";
 import { Card, Container, InputField, Label } from "./styles";
@@ -39,11 +40,13 @@ interface FormData {
   dose_type?: string;
   checkstrip_dose?: number;
   nitrogen_date?: string;
+  choosen_dose_type?: string;
+  planting_type?: string;
 }
 
 interface Props {
   fields: Input;
-  userData: { cpf: string; email: string };
+  userData: { email: string };
   changeState: (state: string, index: number) => void;
   index: number;
 }
@@ -68,12 +71,15 @@ export const FormComponent = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      nitrogen_dose: 0,
-      checkstrip_dose: 0,
-      dose_type: "",
-      nitrogen_source: "",
-      nitrogen_date: "",
+      nitrogen_dose: undefined,
+      checkstrip_dose: undefined,
+      dose_type: undefined,
+      nitrogen_source: undefined,
+      nitrogen_date: undefined,
+      choosen_dose_type: undefined,
+      planting_type: undefined,
     },
+    criteriaMode: "all",
     values,
   });
 
@@ -86,7 +92,6 @@ export const FormComponent = ({
         field_status: "completed",
       };
       await saveValue({
-        cpf: userData.cpf,
         email: userData.email,
         values: {
           checkstrip_dose: values.checkstrip_dose as number,
@@ -97,6 +102,8 @@ export const FormComponent = ({
           nitrogen_dose: values.nitrogen_dose as number,
           nitrogen_source: values.nitrogen_source as string,
           nitrogen_date: values.nitrogen_date as string,
+          planting_type: values.planting_type as string,
+          choosen_dose_type: values.planting_type as string,
         },
       });
       changeState("completed", index);
@@ -116,7 +123,6 @@ export const FormComponent = ({
     };
 
     const res = saveValue({
-      cpf: userData.cpf,
       email: userData.email,
       values: {
         checkstrip_dose: values.checkstrip_dose as number,
@@ -127,6 +133,8 @@ export const FormComponent = ({
         nitrogen_dose: values.nitrogen_dose as number,
         nitrogen_source: values.nitrogen_source as string,
         nitrogen_date: values.nitrogen_date as string,
+        planting_type: values.planting_type as string,
+        choosen_dose_type: values.choosen_dose_type as string,
       },
     }).catch((err) => {
       console.log(err);
@@ -145,9 +153,9 @@ export const FormComponent = ({
             marginBottom: 10,
           }}
         >
-          Dose de Nitrogênio (kg N/ha) utilizada em estágios iniciais
-          (pré-plantio, emergência). Atenção: refere-se ao nitrogênio como
-          elemento, não à fonte do fertilizante.
+          Dosis de Nitrógeno (kg N/ha) utilizado en etapas tempranas
+          (presiembra, emergencia). Atención: se refiere a Nitrogeno elemento,
+          no a la fuente del fertilizante. *
         </Typography>
         <InputField
           disabled={fields.completed}
@@ -156,13 +164,18 @@ export const FormComponent = ({
           type="number"
           placeholder="Número entre 0 y 250"
           {...register("nitrogen_dose", {
-            required: "Introduzca un valor entre 0 y 250",
+            required: true,
             min: 0,
             max: 250,
           })}
           onBlur={() => saveEachInput(index)}
         />
-        <ErrorMessage errors={errors} name="nitrogen_dose" />
+        {/* <ErrorMessage errors={errors} name="nitrogen_dose" /> */}
+        {errors.nitrogen_dose && (
+          <Alert style={{ marginTop: -12, marginBottom: 12 }} severity="error">
+            Introduzca un valor entre 0 y 250
+          </Alert>
+        )}
       </div>
       <div style={{ marginBottom: 25 }}>
         <Typography
@@ -174,28 +187,40 @@ export const FormComponent = ({
             marginBottom: 10,
           }}
         >
-          Fuente de fertilizante a utilizar en la refertilización (Urea,
-          18-18-18, Sulfato de Amonio...)
+          Fuente de fertilizante a utilizar (UAN; SolMix, UAN; Sulfan, etc...) *
         </Typography>
-        <Autocomplete
-          disabled={fields.completed}
-          disablePortal
-          id="combo-box-demo"
-          options={fonteFertilizantes}
-          sx={{ width: 300 }}
-          defaultValue={fonteFertilizantes.find(
-            (fonte) => fonte === getValues().nitrogen_source
+        <Controller
+          rules={{ required: true }}
+          name="nitrogen_source"
+          render={({ field }) => (
+            <Autocomplete
+              {...field}
+              disabled={fields.completed}
+              disablePortal
+              id="combo-box-demo"
+              options={fonteFertilizantes}
+              sx={{ width: 300 }}
+              defaultValue={fonteFertilizantes.find(
+                (fonte) => fonte === getValues().nitrogen_source
+              )}
+              onChange={(e, data) => {
+                console.log(data);
+                setValue("nitrogen_source", data as string);
+              }}
+              renderInput={(params) => (
+                <TextField {...params} label="Elige una de las fuentes" />
+              )}
+              onBlur={() => saveEachInput(index)}
+              value={getValues().nitrogen_source}
+            />
           )}
-          onChange={(e, data) => {
-            console.log(data);
-            setValue("nitrogen_source", data as string);
-          }}
-          renderInput={(params) => (
-            <TextField {...params} label="Elige una de las fuentes" />
-          )}
-          onBlur={() => saveEachInput(index)}
-          value={getValues().nitrogen_source}
+          control={control}
         />
+        {errors.nitrogen_source && (
+          <Alert style={{ marginTop: 12, marginBottom: 12 }} severity="error">
+            Campo obligatolio
+          </Alert>
+        )}
       </div>
       <div style={{ marginBottom: 25 }}>
         <Typography
@@ -206,36 +231,10 @@ export const FormComponent = ({
             color: "#5C5C5C",
           }}
         >
-          Sólo a título informativo: Indica si hasta el momento ya has utiliza
-          aplicación de dosis fija o variable en sus lotes.
+          Solo a modo informativo: Indica si hasta el momento ya utilizaste
+          aplicación de dosis fija o variable en este lote *
         </Typography>
 
-        {/* <RadioGroup
-          aria-labelledby="demo-radio-buttons-group-label"
-          name="radio-buttons-group"
-          value={getValues().dose_type}
-        >
-          <FormControlLabel
-            value="Fixa"
-            checked={getValues().dose_type === "Fixa"}
-            control={<Radio />}
-            label="Fixa"
-          />
-          <FormControlLabel
-            defaultChecked={getValues().dose_type === "Variavel"}
-            value="Variavel"
-            {...register("dose_type")}
-            control={<Radio />}
-            label="Variável"
-          />
-          <FormControlLabel
-            defaultChecked={getValues().dose_type === "Ambos"}
-            value="Ambos"
-            {...register("dose_type")}
-            control={<Radio />}
-            label="Ambos"
-          />
-        </RadioGroup> */}
         <Controller
           rules={{ required: true }}
           control={control}
@@ -245,10 +244,10 @@ export const FormComponent = ({
             <RadioGroup {...field}>
               <FormControlLabel
                 disabled={fields.completed}
-                checked={getValues().dose_type === "Fijado"}
-                value="Fijado"
+                checked={getValues().dose_type === "Fija"}
+                value="Fija"
                 control={<Radio />}
-                label="Fijado"
+                label="Fija"
                 onBlur={() => saveEachInput(index)}
               />
               <FormControlLabel
@@ -261,15 +260,65 @@ export const FormComponent = ({
               />
               <FormControlLabel
                 disabled={fields.completed}
-                checked={getValues().dose_type === "Ambos"}
-                value="Ambos"
+                checked={getValues().dose_type === "Ambas"}
+                value="Ambas"
                 control={<Radio />}
-                label="Ambos"
+                label="Ambas"
                 onBlur={() => saveEachInput(index)}
               />
             </RadioGroup>
           )}
         />
+        {errors.dose_type && (
+          <Alert style={{ marginTop: 12, marginBottom: 12 }} severity="error">
+            Campo obligatolio
+          </Alert>
+        )}
+      </div>
+      <div style={{ marginBottom: 25 }}>
+        <Typography
+          style={{
+            fontWeight: 500,
+            fontSize: 18,
+            fontFamily: "Roboto",
+            color: "#5C5C5C",
+          }}
+        >
+          Indique si requiere la recomendación de Fertilización para aplicación
+          Pre-Siembra/Siembra ó N-Smart(V6) *
+        </Typography>
+
+        <Controller
+          rules={{ required: "Campo obligatorio" }}
+          control={control}
+          name="planting_type"
+          defaultValue={getValues().planting_type}
+          render={({ field }) => (
+            <RadioGroup {...field}>
+              <FormControlLabel
+                disabled={fields.completed}
+                checked={getValues().planting_type === "Pre Siembra/Siembra"}
+                value="Pre Siembra/Siembra "
+                control={<Radio />}
+                label="Pre Siembra/Siembra"
+                onBlur={() => saveEachInput(index)}
+              />
+              <FormControlLabel
+                disabled={fields.completed}
+                checked={getValues().planting_type === "N-smart (V6)"}
+                value="N-smart (V6)"
+                control={<Radio />}
+                label="N-smart (V6)"
+                onBlur={() => saveEachInput(index)}
+              />
+            </RadioGroup>
+          )}
+        />
+        {errors.planting_type && (
+          <Alert style={{ marginBottom: 12 }} severity="error">
+            Campo obligatolio
+          </Alert>
+        )}
       </div>
       <div>
         <Typography
@@ -281,17 +330,68 @@ export const FormComponent = ({
             marginBottom: 10,
           }}
         >
-          Si desea utilizar su dosis de nitrógeno en el rango de prueba, indique
-          la dosis a utilizar.
+          Si fertilizas/refertilizas en la franja testigo, indica dosis a
+          utilizar, si no ingresa el valor 0 (cero) *
         </Typography>
         <InputField
           disabled={fields.completed}
           type="number"
           id="Concentração"
           placeholder="El valor debe ser un número."
-          {...register("checkstrip_dose")}
+          {...register("checkstrip_dose", {
+            required: "Campo obligatolio",
+          })}
           onBlur={() => saveEachInput(index)}
         />
+        {errors.checkstrip_dose && (
+          <Alert style={{ marginTop: -5, marginBottom: 12 }} severity="error">
+            Campo obligatolio
+          </Alert>
+        )}
+      </div>
+      <div style={{ marginBottom: 25 }}>
+        <Typography
+          style={{
+            fontWeight: 500,
+            fontSize: 18,
+            fontFamily: "Roboto",
+            color: "#5C5C5C",
+          }}
+        >
+          Indica si realizarás fertilización/refertilización fija o variable:
+        </Typography>
+
+        <Controller
+          rules={{ required: "Campo obligatorio" }}
+          control={control}
+          name="choosen_dose_type"
+          defaultValue={getValues().choosen_dose_type}
+          render={({ field }) => (
+            <RadioGroup {...field}>
+              <FormControlLabel
+                disabled={fields.completed}
+                checked={getValues().choosen_dose_type === "Fija"}
+                value="Fija"
+                control={<Radio />}
+                label="Fija"
+                onBlur={() => saveEachInput(index)}
+              />
+              <FormControlLabel
+                disabled={fields.completed}
+                checked={getValues().choosen_dose_type === "Variable"}
+                value="Variable"
+                control={<Radio />}
+                label="Variable"
+                onBlur={() => saveEachInput(index)}
+              />
+            </RadioGroup>
+          )}
+        />
+        {errors.choosen_dose_type && (
+          <Alert style={{ marginTop: 10, marginBottom: 12 }} severity="error">
+            Campo obligatolio
+          </Alert>
+        )}
       </div>
       <div>
         <Typography
@@ -303,16 +403,23 @@ export const FormComponent = ({
             marginBottom: 10,
           }}
         >
-          Indique la fecha estimada de refertilización.
+          Indique la fecha estimada de refertilización. *
         </Typography>
         <InputField
           disabled={fields.completed}
           color="#5C5C5C"
           type="date"
           id="date"
-          {...register("nitrogen_date")}
+          {...register("nitrogen_date", {
+            required: "Campo obligatolio",
+          })}
           onBlur={() => saveEachInput(index)}
         />
+        {errors.nitrogen_date && (
+          <Alert style={{ marginBottom: 12 }} severity="error">
+            Campo obligatolio
+          </Alert>
+        )}
       </div>
       <div
         style={{

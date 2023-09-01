@@ -2,7 +2,6 @@ import axios, { AxiosResponse } from "axios";
 
 export interface LoginReq {
   email: string;
-  cpf: string;
 }
 
 export interface Input {
@@ -14,6 +13,8 @@ export interface Input {
   nitrogen_dose?: number;
   nitrogen_source?: string;
   nitrogen_date?: string;
+  planting_type?: string;
+  choosen_dose_type?: string;
 }
 
 interface Field {
@@ -30,8 +31,10 @@ export interface LoginRes {
 }
 
 export const login = async (values: LoginReq) => {
+  const url = `${window.location.href}`;
+  const season = url.split("growing_season=")[1];
   const response: AxiosResponse<LoginRes> = await axios.get(
-    `https://oox9hmqkb5.execute-api.us-east-1.amazonaws.com/dev/valGetFieldsInfo?email=${values.email}&cpf=${values.cpf}&growing_season=2023:corn:BR:2:SAF`
+    `https://oox9hmqkb5.execute-api.us-east-1.amazonaws.com/dev/valGetFieldsInfo?email=${values.email}&growing_season=${season}`
   );
   return response;
 };
