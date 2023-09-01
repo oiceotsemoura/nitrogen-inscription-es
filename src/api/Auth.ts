@@ -33,8 +33,14 @@ export interface LoginRes {
 export const login = async (values: LoginReq) => {
   const url = `${window.location.href}`;
   const season = url.split("growing_season=")[1];
+  const config = {
+    headers: {
+      "x-api-key": "test",
+    },
+  };
   const response: AxiosResponse<LoginRes> = await axios.get(
-    `https://oox9hmqkb5.execute-api.us-east-1.amazonaws.com/dev/valGetFieldsInfo?email=${values.email}&growing_season=${season}`
+    `https://oox9hmqkb5.execute-api.us-east-1.amazonaws.com/dev/valGetFieldsInfo?email=${values.email}&growing_season=${season}`,
+    config
   );
   return response;
 };
