@@ -102,6 +102,12 @@ export const AuthScreen = () => {
               protegida! Además de proporcionar prescripciones de densidad de
               siembra de semillas que mejoran tus lotes de maíz Dekalb, podemos
               ofrecer recomendaciones personalizadas de aplicación de nitrógeno.
+              <br />
+              <br />
+              Este es un beneficio exclusivo para los clientes de Bayer VAlora.
+              Asegúrate de haber registrado correctamente los lotes para los que
+              desees solicitar la recomendación de nitrógeno y completa los
+              datos a continuación.
             </Typography>
           </FormContainer>
         </div>
@@ -173,7 +179,7 @@ export const AuthScreen = () => {
                 <CircularProgress />
               ) : (
                 <Button type="submit" variant="contained">
-                  Avance
+                  AVANZAR
                 </Button>
               )}
             </div>

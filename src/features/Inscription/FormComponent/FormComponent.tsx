@@ -66,7 +66,7 @@ export const FormComponent = ({
   } = useForm({
     defaultValues: {
       nitrogen_dose: undefined,
-      checkstrip_dose: undefined,
+      checkstrip_dose: 0,
       dose_type: undefined,
       nitrogen_source: undefined,
       nitrogen_date: undefined,
@@ -196,17 +196,17 @@ export const FormComponent = ({
               options={fonteFertilizantes}
               sx={{ width: 300 }}
               defaultValue={fonteFertilizantes.find(
-                (fonte) => fonte === getValues().nitrogen_source
+                (fonte) => fonte.trim() === getValues().nitrogen_source?.trim()
               )}
               onChange={(e, data) => {
                 console.log(data);
-                setValue("nitrogen_source", data as string);
+                setValue("nitrogen_source", data?.trim() as string);
               }}
               renderInput={(params) => (
                 <TextField {...params} label="Elige una de las fuentes" />
               )}
               onBlur={() => saveEachInput(index)}
-              value={getValues().nitrogen_source}
+              value={getValues().nitrogen_source?.trim()}
             />
           )}
           control={control}
@@ -326,7 +326,7 @@ export const FormComponent = ({
           }}
         >
           Si fertilizas/refertilizas en la franja testigo, indica dosis a
-          utilizar, si no ingresa el valor 0 (cero) *
+          utilizar, sino ingresa el valor 0 (cero) *
         </Typography>
         <InputField
           disabled={fields.completed}
@@ -408,10 +408,7 @@ export const FormComponent = ({
           {...register("nitrogen_date", {
             validate: {
               required: (value) => {
-                if (
-                  !value &&
-                  getValues("planting_type") === "Pre Siembra/Siembra"
-                )
+                if (!value && getValues("planting_type") === "N-smart (V6)")
                   return "Campo obligatorio";
                 return true;
               },
@@ -436,7 +433,7 @@ export const FormComponent = ({
           <CircularProgress />
         ) : (
           <Button disabled={fields.completed} type="submit" variant="outlined">
-            Mandar
+            ENVIAR
           </Button>
         )}
       </div>

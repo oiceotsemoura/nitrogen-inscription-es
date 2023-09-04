@@ -21,7 +21,7 @@ const chipColor = (status: string) => {
 const statusObject = {
   completed: "Concluido",
   started: "En proceso",
-  empty: "No llenado",
+  empty: "Sin Completar",
 };
 
 interface userData extends LoginRes {}
@@ -68,12 +68,6 @@ export const InscriptionScreen = () => {
       newFields.fields[index].input.completed = true;
       setUserDataState({ ...newFields });
     }
-
-    // if (userDataState.fields[index].input.field_status === "empty") {
-    //   const newFields = userDataState;
-    //   console.log("starts", index);
-    //   newFields.fields[index].input.field_status = "started";
-    // }
   };
 
   return (
