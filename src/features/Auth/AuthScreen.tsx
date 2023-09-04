@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Typography, Button, CircularProgress, TextField } from "@mui/material";
-import { Container, Input, Label, FormContainer, CardWrapper } from "./styles";
+import { Container, FormContainer } from "./styles";
 import { login } from "../../api/Auth";
 import { BasicModal } from "../../components/Modal/Modal";
 import { BaseText } from "../../components/BaseText/BaseText";
@@ -147,20 +147,6 @@ export const AuthScreen = () => {
                 paddingTop: "10px",
               }}
             >
-              {/* <TextField
-                variant="filled"
-                style={{
-                  width: "100%",
-                  marginBottom: "12px",
-                  marginRight: "10px",
-                }}
-                disabled={isLoading}
-                type="text"
-                id="cpf"
-                label="CUIT"
-                {...register("cpf", { required: true })}
-              /> */}
-
               <TextField
                 variant="filled"
                 style={{

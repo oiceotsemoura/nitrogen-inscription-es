@@ -5,17 +5,11 @@ import {
   AccordionSummary,
   AccordionDetails,
   Chip,
-  Button,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Autocomplete,
-  TextField,
 } from "@mui/material";
 import { LoginRes, login } from "../../api/Auth";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { FormComponent } from "./FormComponent/FormComponent";
-import { Card, Container, Input, Label } from "./styles";
+import { Container } from "./styles";
 
 const chipColor = (status: string) => {
   if (status === "started") return "warning";

@@ -2,10 +2,6 @@ import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Chip,
   Button,
   RadioGroup,
   FormControlLabel,
@@ -16,9 +12,8 @@ import {
   Alert,
 } from "@mui/material";
 import { Input } from "../../../api/Auth";
-import { Card, Container, InputField, Label } from "./styles";
+import { InputField } from "./styles";
 import { saveValue } from "../../../api/Inscription";
-import { ErrorMessage } from "@hookform/error-message";
 
 const fonteFertilizantes = [
   "Urea granulada (46 %N)",
@@ -64,7 +59,6 @@ export const FormComponent = ({
   const {
     register,
     handleSubmit,
-    watch,
     getValues,
     setValue,
     control,
@@ -172,7 +166,6 @@ export const FormComponent = ({
           })}
           onBlur={() => saveEachInput(index)}
         />
-        {/* <ErrorMessage errors={errors} name="nitrogen_dose" /> */}
         {errors.nitrogen_dose && (
           <Alert style={{ marginTop: -12, marginBottom: 12 }} severity="error">
             Introduzca un valor entre 0 y 250
@@ -300,7 +293,7 @@ export const FormComponent = ({
               <FormControlLabel
                 disabled={fields.completed}
                 checked={getValues().planting_type === "Pre Siembra/Siembra"}
-                value="Pre Siembra/Siembra "
+                value="Pre Siembra/Siembra"
                 control={<Radio />}
                 label="Pre Siembra/Siembra"
                 onBlur={() => saveEachInput(index)}
@@ -413,7 +406,16 @@ export const FormComponent = ({
           type="date"
           id="date"
           {...register("nitrogen_date", {
-            required: "Campo obligatolio",
+            validate: {
+              required: (value) => {
+                if (
+                  !value &&
+                  getValues("planting_type") === "Pre Siembra/Siembra"
+                )
+                  return "Campo obligatorio";
+                return true;
+              },
+            },
           })}
           onBlur={() => saveEachInput(index)}
         />
